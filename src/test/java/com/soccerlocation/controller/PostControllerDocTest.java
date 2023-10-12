@@ -38,6 +38,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(RestDocumentationExtension.class)
 public class PostControllerDocTest {
 
+
+    /**
+     * 원래라면 세팅을 해줘야한다.
+     * 근데 내용을 보면 mockMvc를 초기화해주는내용이다
+     * 그러면 그냥 AutoConfigureMockMvc 로 mockMvc 주입해주자.
+     */
+//    @BeforeEach
+//    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
+//        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+//                .apply(documentationConfiguration(restDocumentation))
+//                .build();
+//    }
+
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -58,6 +72,15 @@ public class PostControllerDocTest {
 
         postRepository.save(post);
 
+        /**
+         * accept :: 이 유형의 값만 받겠다
+         *  pathParameters 에 대한 설명을 해준다.
+         *  ResponseFields  (identifier 를 통해 build 안에 있는 폴더 분기)
+         *   -> 응답 값
+         *      id : 1,
+         *     title : ~
+         *     content : ~
+         */
         // expected
         this.mockMvc.perform(RestDocumentationRequestBuilders
                         .get("/posts/{postId}", 1L)
