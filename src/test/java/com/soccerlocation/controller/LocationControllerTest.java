@@ -6,6 +6,6 @@ package com.soccerlocation.controller;
 public class LocationControllerTest {
 
     /**
-     *git Test - AGAIN
+     * doing alone
      */
 }
