@@ -43,6 +43,8 @@ public class PostController {
 //            throw new InvalidRequest();
 //        }
 
+        log.info(request.getTitle() + " " + request.getContent());
+
         request.validate();
 
         postService.write(request);
