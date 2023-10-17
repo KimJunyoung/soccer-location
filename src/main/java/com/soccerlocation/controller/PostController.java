@@ -1,5 +1,6 @@
 package com.soccerlocation.controller;
 
+import com.soccerlocation.config.data.UserSession;
 import com.soccerlocation.domain.Post;
 import com.soccerlocation.exception.InvalidRequest;
 import com.soccerlocation.request.PostCreate;
@@ -30,6 +31,12 @@ public class PostController {
 
     private final PostService postService;
 
+    @GetMapping("/foo")
+    public Long foo(UserSession userSession){
+        log.info(">>> {}", userSession.id);
+        return userSession.id;
+    }
+
     /**
      * Valid 한게 컨트롤러까지 넘어오지 않고 그 전에 처리된다. 김영한 강의를 들었던 기억이 스믈스믈..
      * 근데 bidingResult 사용하면 컨트롤러까지 넘어옴
@@ -38,15 +45,15 @@ public class PostController {
     public void post(@RequestBody @Valid PostCreate request) {
         /**
          * 값을 가져와서 검증하는건 좋은게 아니다.
+         * --- 인증 ---
+         * 1. Get
+         * 2. Post Value X
+         * 3. Header
          */
 //        if(request.getTitle().contains("바보")){
 //            throw new InvalidRequest();
 //        }
-
-        log.info(request.getTitle() + " " + request.getContent());
-
         request.validate();
-
         postService.write(request);
     }
 

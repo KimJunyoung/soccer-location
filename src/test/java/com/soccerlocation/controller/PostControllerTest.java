@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -44,32 +45,6 @@ class PostControllerTest {
     @BeforeEach
     void clean() {
         postRepository.deleteAll();
-    }
-
-    @Test
-    @DisplayName("/posts 요청 시 title 값은 필수다.")
-    void testV1() throws Exception {
-
-        /**
-         * 보낼 내용 :
-         *  글 제목, 글 내용
-         */
-
-        PostCreate request = PostCreate.builder()
-                .title("제목입니다.")
-                .content("내용입니다.")
-                .build();
-
-        System.out.println(request);
-
-        String json = objectMapper.writeValueAsString(request);
-
-        // expected
-        mockMvc.perform(post("/posts")
-                        .contentType(APPLICATION_JSON)
-                        .content(json)) // application/json
-                .andExpect(status().isOk())
-                .andDo(print());
     }
 
     @Test
@@ -98,6 +73,32 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
                 .andExpect(jsonPath("$.validation[0].fieldName").value("title"))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/posts 요청시 DB에 값이 저장된다.")
+    void testV1() throws Exception {
+        // given
+        PostCreate request = PostCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        // when
+        mockMvc.perform(post("/posts")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        // then
+        assertEquals(1L, postRepository.count());
+
+        Post post = postRepository.findAll().get(0);
+        assertEquals("제목입니다.", post.getTitle());
+        assertEquals("내용입니다.", post.getContent());
     }
 
     @Test

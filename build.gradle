@@ -48,7 +48,7 @@ dependencies {
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"  // java.lang.NoClassDefFoundError (javax.annotation.Generated) 발생 대응
 
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.h2database:h2:1.4.200'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
@@ -68,9 +68,14 @@ test {
 }
 
 bootJar {
+
 	dependsOn asciidoctor
 	copy {
 		from "${asciidoctor.outputDir}"
 		into 'src/main/resources/static'
 	}
+}
+
+jar {
+	enabled = false
 }
