@@ -1,37 +1,55 @@
 package com.soccerlocation.controller;
 
-import com.soccerlocation.domain.Member;
-import com.soccerlocation.exception.InvalidRequest;
-import com.soccerlocation.exception.InvalidSingingInformation;
-import com.soccerlocation.repository.MemberRepository;
+
+import com.soccerlocation.config.AppConfig;
 import com.soccerlocation.request.Login;
+import com.soccerlocation.request.Signup;
+import com.soccerlocation.response.SessionResponse;
+import com.soccerlocation.service.AuthService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import javax.crypto.SecretKey;
+import java.util.Base64;
+import java.util.Date;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final MemberRepository memberRepository;
+    private final AppConfig appConfig;
+    private final AuthService authService;
 
     @PostMapping("/auth/login")
-    public Member login(@RequestBody Login login){
-         // json 아이디/ 비밀번호 받기
-        log.info(">>> {}", login);
-
-        // DB에서 조회
-        Member user = memberRepository.findByEmailAndPassword(login.getEmail(), login.getPassword())
-                .orElseThrow(InvalidSingingInformation::new);
+    public SessionResponse login(@RequestBody Login login){
+        Long userId = authService.signIn(login);
 
 
+        SecretKey key = Keys.hmacShaKeyFor(appConfig.getJwtKey());
+        String jws = Jwts.builder()
+                .subject(String.valueOf(userId))
+                .issuedAt(new Date())
+                .signWith(key)
+                .compact();
 
-        // 토큰을 응답
-        return user;
+        log.info(jws);
+
+
+
+        return new SessionResponse(jws);
     }
+
+
+    @PostMapping("/auth/signup")
+    public void signup(@RequestBody Signup signup){
+        authService.signup(signup);
+    }
+
 }

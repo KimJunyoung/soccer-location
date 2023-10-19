@@ -3,10 +3,11 @@ spring:
     web:
       pageable:
         one-indexed-parameters: true
-        default-page-size: 5
+        default-page-size: 20
+        max-page-size: 2000
 
   datasource:
-    url: jdbc:h2:tcp://localhost/~/soccer
+    url: jdbc:h2:~/soccer:AUTO_SERVER=true
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -18,4 +19,9 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
+
+
+soccer:
+  jwt-key: "bCpkCjHuWStC+JS5YJVB62L86r7Wenb/EFHs2q5xgjE="
+
 

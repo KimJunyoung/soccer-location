@@ -33,7 +33,6 @@ public class InitDb {
                     .name("김준영")
                     .email("985151@naver.com")
                     .password("!wns6713")
-                    .createdAt(LocalDateTime.now())
                     .build();
 
                 em.persist(member);
